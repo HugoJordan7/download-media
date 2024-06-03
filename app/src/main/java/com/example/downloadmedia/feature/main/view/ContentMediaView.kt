@@ -1,10 +1,12 @@
-package br.com.selfbot.mobile.android.feature.chat.view
+package com.example.downloadmedia.feature.main.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,19 +19,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.downloadmedia.R
 
-/**
- * Created by hugo on 27/05/2024.
- */
 @Composable
 fun ContentMediaView() {
     val context = LocalContext.current
     Row(
         modifier = Modifier
-            .width(200.dp)
-            .height(40.dp)
+            .fillMaxWidth(0.65f)
             .background(
                 color = Color(0xFF955FDB),
                 shape = RoundedCornerShape(10.dp)
@@ -40,25 +39,32 @@ fun ContentMediaView() {
             contentDescription = "",
             modifier = Modifier
                 .align(Alignment.CenterVertically)
-                .padding(start = 10.dp)
+                .padding(start = 5.dp, top = 5.dp, bottom = 5.dp)
                 .size(30.dp)
-                .clickable {  }
+                .clickable { }
         )
-        Text(
-            text = "MANUAL-SELFBOT.pdf",
-            color = Color.White,
+        Column(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
+                .width(160.dp)
                 .padding(start = 5.dp)
-        )
+        ) {
+            Text(
+                text = "Hugo.pdf",
+                color = Color.White,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
         Image(
             painter = painterResource(id = R.drawable.ic_media_download),
             contentDescription = "",
             modifier = Modifier
                 .align(Alignment.CenterVertically)
-                .padding(start = 0.dp)
+                .padding(start = 10.dp, end = 5.dp)
                 .size(30.dp)
-                .clickable {  }
+                .clickable { }
         )
     }
     Spacer(modifier = Modifier.padding(bottom = 8.dp))
