@@ -12,7 +12,7 @@ import java.io.FileOutputStream
 class DownloadManager {
 
     @Throws
-    fun downloadFile(url: String, fileName: String, context: Context) {
+    fun downloadFile(url: String, fileName: String, context: Context, callback: (isComplete: Boolean) -> Unit) {
         val requestQueue = Volley.newRequestQueue(context)
         val byteRequest = object : Request<ByteArray>(
             Method.GET, url,
@@ -24,14 +24,14 @@ class DownloadManager {
             }
 
             override fun deliverResponse(response: ByteArray) {
-                saveFileToDownloadFolder(response, fileName)
+                saveFileToDownloadFolder(response, fileName, callback)
             }
         }
         requestQueue.add(byteRequest)
     }
 
     @Throws
-    private fun saveFileToDownloadFolder(response: ByteArray, fileName: String) {
+    private fun saveFileToDownloadFolder(response: ByteArray, fileName: String, callback: (isComplete: Boolean) -> Unit) {
         val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         var file = File(downloadsDir, fileName)
         if (file.exists()) {
@@ -47,6 +47,7 @@ class DownloadManager {
         val fileOutputStream = FileOutputStream(file)
         fileOutputStream.write(response)
         fileOutputStream.close()
+        callback(true)
     }
 
 }

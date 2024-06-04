@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -32,6 +34,7 @@ fun ContentMediaView() {
     val context: Context = LocalContext.current
     val viewModel: MediaViewModel by inject()
     val isFailure = viewModel.isFailure.collectAsState().value
+    val isDownloading = viewModel.isDownloading.collectAsState().value
     val errorMessage = viewModel.errorMessage.collectAsState().value
     if(isFailure){
         Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
@@ -66,22 +69,33 @@ fun ContentMediaView() {
                 overflow = TextOverflow.Ellipsis
             )
         }
-        Image(
-            painter = painterResource(id = R.drawable.ic_media_download),
-            contentDescription = "",
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .padding(start = 10.dp, end = 5.dp)
-                .size(30.dp)
-                .clickable {
-                    viewModel.downloadMedia(
-                        "https://www.ribeiraopreto.sp.gov.br/files/ssaude/pdf/og_acao_combate_m_aedes.pdf",
-                        "AAAAAedes - Combate.pdf",
-                        context
-                    )
-                    Toast.makeText(context, "Começando o download do arquivo!", Toast.LENGTH_SHORT).show()
-                }
-        )
+        if (!isDownloading){
+            Image(
+                painter = painterResource(id = R.drawable.ic_media_download),
+                contentDescription = "",
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 10.dp, end = 5.dp)
+                    .size(30.dp)
+                    .clickable {
+                        viewModel.downloadMedia(
+                            "https://www.ribeiraopreto.sp.gov.br/files/ssaude/pdf/og_acao_combate_m_aedes.pdf",
+                            "Combate ao aedes.pdf",
+                            context
+                        )
+                    }
+            )
+        } else{
+            Toast.makeText(context, "Começando o download do arquivo!", Toast.LENGTH_SHORT).show()
+            CircularProgressIndicator(
+                color = Color.White,
+                strokeWidth = 3.dp,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 10.dp, end = 5.dp)
+                    .size(25.dp)
+            )
+        }
     }
     Spacer(modifier = Modifier.padding(bottom = 8.dp))
 }

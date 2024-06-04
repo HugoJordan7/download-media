@@ -1,20 +1,22 @@
 package com.example.downloadmedia.feature.main.view
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.downloadmedia.feature.main.viewModel.MediaViewModel
+import androidx.compose.ui.unit.dp
 import com.example.downloadmedia.ui.theme.DownloadMediaTheme
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,17 +33,28 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @Preview(showBackground = true)
-    @Composable
-    fun GreetingPreview() {
-        DownloadMediaTheme {
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
-            ) {
-                ChatItem()
-            }
+}
+
+@Composable
+fun CircularProgressTest(){
+    DownloadMediaTheme {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            CircularProgressIndicator(
+                color = Color.Blue,
+                strokeWidth = 2.dp,
+                modifier = Modifier
+                    .padding(start = 10.dp, end = 5.dp)
+                    .size(30.dp)
+                    .align(Alignment.Center)
+            )
         }
     }
+}
 
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    CircularProgressTest()
 }
