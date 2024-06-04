@@ -17,8 +17,8 @@ class App : Application() {
             androidContext(this@App)
             modules(
                 listOf(
-                    viewModelModule,
-                    managerModule
+                    managerModule,
+                    viewModelModule
                 )
             )
         }

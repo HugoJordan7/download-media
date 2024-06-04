@@ -1,32 +1,52 @@
 package com.example.downloadmedia.manager
 
 import android.content.Context
+import android.os.Environment
 import com.android.volley.Request
-import com.android.volley.toolbox.StringRequest
+import com.android.volley.Response
+import com.android.volley.toolbox.HttpHeaderParser
 import com.android.volley.toolbox.Volley
+import java.io.File
+import java.io.FileOutputStream
 
 class DownloadManager {
 
     @Throws
-    fun downloadFile(url: String, fileName: String, context: Context){
+    fun downloadFile(url: String, fileName: String, context: Context) {
         val requestQueue = Volley.newRequestQueue(context)
-        val stringRequest = StringRequest(Request.Method.GET, url, { response ->
-            saveFileToDownloadFolder(response, fileName, context)
-        }, { error ->
-            throw Exception(error.message ?: "Unknown error")
-        })
-        requestQueue.add(stringRequest)
+        val byteRequest = object : Request<ByteArray>(
+            Method.GET, url,
+            { error ->
+                throw Exception(error.message ?: "Unknown error")
+            }) {
+            override fun parseNetworkResponse(response: com.android.volley.NetworkResponse): Response<ByteArray> {
+                return Response.success(response.data, HttpHeaderParser.parseCacheHeaders(response))
+            }
+
+            override fun deliverResponse(response: ByteArray) {
+                saveFileToDownloadFolder(response, fileName)
+            }
+        }
+        requestQueue.add(byteRequest)
     }
 
-    private fun saveFileToDownloadFolder(response: String, fileName: String, context: Context) {
-        val fileOutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
-        val inputStream = response.byteInputStream()
-        val buffer = ByteArray(1024)
-        var bytesRead: Int
-        while (inputStream.read(buffer).also { bytesRead = it } != -1) {
-            fileOutputStream.write(buffer, 0, bytesRead)
+    @Throws
+    private fun saveFileToDownloadFolder(response: ByteArray, fileName: String) {
+        val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        var file = File(downloadsDir, fileName)
+        if (file.exists()) {
+            val fileNameBeforeExtension = fileName.substringBeforeLast(".")
+            val fileExtension = fileName.substringAfterLast(".", "")
+            var counter = 1
+            while (file.exists()) {
+                val newFileName = "$fileNameBeforeExtension ($counter).$fileExtension"
+                file = File(downloadsDir, newFileName)
+                counter++
+            }
         }
-        inputStream.close()
+        val fileOutputStream = FileOutputStream(file)
+        fileOutputStream.write(response)
         fileOutputStream.close()
     }
+
 }
